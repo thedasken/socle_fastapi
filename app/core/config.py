@@ -1,6 +1,7 @@
 from typing import Any
-
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from .constants import Environment
 
 
 class CustomBaseSettings(BaseSettings):
@@ -12,6 +13,7 @@ class CustomBaseSettings(BaseSettings):
 class Config(CustomBaseSettings):
     APP_NAME: str
     APP_VERSION: str
+    ENVIRONMENT: Environment
 
 
 settings = Config()
