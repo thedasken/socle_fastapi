@@ -16,7 +16,7 @@ socle_fastapi/
 └── justfile
 ```
 
-# PostgreSQL Service
+# FastAPI Service
 
 Template FastAPI Python 3.12 slim pour micro-services avec Podman.
 
