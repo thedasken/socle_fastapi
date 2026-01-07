@@ -43,14 +43,3 @@ app.include_router(app_router)
 async def root() -> dict[str, str]:
     logger.info("Default route")
     return {"message": "Hello World!"}
-
-
-from pydantic import BaseModel
-
-class UserCreate(BaseModel):
-    name: str
-    age: int
-
-@app.post("/test-validation")
-async def test_validation(user: UserCreate):
-    return {"message": f"User {user.name} created"}
