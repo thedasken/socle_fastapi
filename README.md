@@ -11,7 +11,9 @@ socle_fastapi/
 ├── pyproject.toml
 ├── README.md
 ├── app/
-|   ├── ...
+|   ├── core/
+|   |   ├── __init__.py
+|   |   └── config.py
 |   └── main.py
 └── justfile
 ```
@@ -38,7 +40,7 @@ cp .env.example .env
 
 # 2. GO!
 just build
-just start
+just run
 ```
 
 ---
@@ -46,9 +48,11 @@ just start
 ## Utilisation
 
 ```bash
+just run        # Démarrer en local
+just run-dev    # Démarrer en local en mode dev (hot reload)
 just build      # Construire l'image
-just start      # Démarrer
-just stop       # Arrêter
+just start      # Démarrer le pod
+just stop       # Arrêter le pod
 just clean      # Supprimer le pod
 just logs       # Voir les logs
 just cli        # Se connecter au conteneur

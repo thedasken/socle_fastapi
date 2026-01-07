@@ -2,4 +2,7 @@ default:
     just --list
 
 run:
-    uv run python app/main.py
+    uv run uvicorn app.main:app
+
+run-dev:
+    uv run uvicorn app.main:app --reload
