@@ -6,3 +6,6 @@ run:
 
 run-dev:
     uv run uvicorn app.main:app --reload --no-access-log
+
+test:
+    uv run pytest -v
