@@ -1,6 +1,7 @@
 import logging
 import json
 from contextvars import ContextVar
+from opentelemetry import trace
 
 from .config import settings
 
@@ -12,6 +13,16 @@ request_id_context: ContextVar[str] = ContextVar("request_id", default="n/a")
 class RequestIDFilter(logging.Filter):
     def filter(self, record):
         record.request_id = request_id_context.get()
+
+        # Récupération du trace_id OTEL actuel
+        current_span = trace.get_current_span()
+        span_context = current_span.get_span_context()
+
+        if span_context.is_valid:
+            # On convertit l'ID hexadécimal en chaîne lisible
+            record.trace_id = format(span_context.trace_id, '032x')
+        else:
+            record.trace_id = "n/a"
         return True
 
 
@@ -37,7 +48,7 @@ def setup_logging():
         formatter = JSONFormatter()
     else:
         # Format lisible pour le dev
-        log_format = "%(asctime)s | %(levelname)s | [RID: %(request_id)s] | %(name)s:%(lineno)d | %(message)s"
+        log_format = "%(asctime)s | %(levelname)s | [RID: %(request_id)s] [TRACE: %(trace_id)s] | %(name)s:%(lineno)d | %(message)s"
         formatter = logging.Formatter(log_format)
 
     handler.setFormatter(formatter)

@@ -6,12 +6,14 @@ from fastapi import FastAPI
 from fastapi_offline import FastAPIOffline
 from starlette.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 
 from .core.config import settings, app_configs
 from .api.routes.router import router as app_router
 from .api.middlewares.logging import LoggingMiddleware
 from .core.logging import setup_logging
 from .core.exceptions import DetailedHTTPException, detailed_http_exception_handler, NotFound
+from .core.telemetry import setup_telemetry
 
 
 setup_logging()
@@ -26,6 +28,13 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
 
 
 app = FastAPIOffline(**app_configs, lifespan=lifespan)
+
+
+# Setup Prometheus /metrics
+setup_telemetry(app)
+
+# Instrumentation automatique OTEL
+FastAPIInstrumentor.instrument_app(app)
 
 
 app.add_exception_handler(HTTPException, detailed_http_exception_handler)
