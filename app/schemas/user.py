@@ -1,6 +1,9 @@
-from pydantic import EmailStr, Field, UUID4
 from datetime import datetime
+
+from pydantic import UUID4, EmailStr, Field
+
 from ..core.schemas import CustomModel
+
 
 class UserRead(CustomModel):
     id: UUID4

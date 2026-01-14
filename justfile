@@ -12,3 +12,13 @@ test:
 
 migrate:
     uv run alembic upgrade head
+
+ruff *args:
+    uv run ruff check {{args}} app tests migrations
+
+lint:
+    uv run ruff format app tests migrations
+    just ruff --fix
+
+sort:
+    uv run isort .

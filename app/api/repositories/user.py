@@ -1,5 +1,6 @@
 from uuid import UUID
-from sqlalchemy import select, insert
+
+from sqlalchemy import insert, select
 
 from ...core.database import transaction
 from ...models.user import User
@@ -18,11 +19,7 @@ class UserRepository:
     async def create(username: str, email: str) -> dict:
         """Crée un utilisateur et retourne les données insérées."""
         async with transaction() as session:
-            query = (
-                insert(User)
-                .values(username=username, email=email)
-                .returning(User)
-            )
+            query = insert(User).values(username=username, email=email).returning(User)
             result = await session.execute(query)
             return result.mappings().first()
 

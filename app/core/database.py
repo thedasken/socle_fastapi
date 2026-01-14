@@ -1,35 +1,40 @@
-from typing import Any
 from contextlib import asynccontextmanager
-from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncConnection
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy import (
-    CursorResult,
-    Insert,
-    MetaData,
-    Select,
-    Update,
+from typing import Any
+
+from sqlalchemy import CursorResult, Insert, MetaData, Select, Update
+from sqlalchemy.exc import InternalError, OperationalError
+from sqlalchemy.ext.asyncio import (
+    AsyncConnection,
+    async_sessionmaker,
+    create_async_engine,
 )
-from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
-from sqlalchemy.exc import OperationalError, InternalError
+from sqlalchemy.orm import DeclarativeBase
+from tenacity import (
+    retry,
+    retry_if_exception_type,
+    stop_after_attempt,
+    wait_exponential,
+)
 
 from .config import settings
 from .constants import DB_NAMING_CONVENTION
-
 
 engine = create_async_engine(
     str(settings.DATABASE_ASYNC_URL),
     pool_size=settings.DATABASE_POOL_SIZE,
     pool_recycle=settings.DATABASE_POOL_TTL,
     pool_pre_ping=settings.DATABASE_POOL_PRE_PING,
-    echo=settings.ENVIRONMENT.is_debug, # Log SQL en LOCAL
+    echo=settings.ENVIRONMENT.is_debug,  # Log SQL en LOCAL
 )
 
 metadata = MetaData(naming_convention=DB_NAMING_CONVENTION)
 
 async_session_maker = async_sessionmaker(engine, expire_on_commit=False)
 
+
 class Base(DeclarativeBase):
     metadata = metadata
+
 
 async def fetch_one(
     select_query: Select | Insert | Update,
@@ -94,8 +99,9 @@ db_retry = retry(
     stop=stop_after_attempt(3),
     wait=wait_exponential(multiplier=1, min=2, max=10),
     retry=retry_if_exception_type((OperationalError, InternalError)),
-    reraise=True
+    reraise=True,
 )
+
 
 @asynccontextmanager
 @db_retry

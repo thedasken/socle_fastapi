@@ -1,7 +1,8 @@
 from typing import Any, Optional
-from fastapi import HTTPException, status, Request
-from fastapi.responses import JSONResponse
+
+from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 
 from .config import settings
 
@@ -10,12 +11,12 @@ class DetailedHTTPException(HTTPException):
     STATUS_CODE: int = status.HTTP_500_INTERNAL_SERVER_ERROR
     DETAIL: str = "Internal Server Error"
 
-    def __init__(self, detail: Optional[str] = None, headers: Optional[dict[str, Any]] = None) -> None:
+    def __init__(
+        self, detail: Optional[str] = None, headers: Optional[dict[str, Any]] = None
+    ) -> None:
         # Utilise le détail spécifique si fourni, sinon la constante de classe
         super().__init__(
-            status_code=self.STATUS_CODE, 
-            detail=detail or self.DETAIL, 
-            headers=headers
+            status_code=self.STATUS_CODE, detail=detail or self.DETAIL, headers=headers
         )
 
 
@@ -40,16 +41,15 @@ class NotAuthenticated(DetailedHTTPException):
 
     def __init__(self, detail: Optional[str] = None) -> None:
         # RFC 6750: Le header WWW-Authenticate est requis pour la 401
-        super().__init__(
-            detail=detail, 
-            headers={"WWW-Authenticate": "Bearer"}
-        )
+        super().__init__(detail=detail, headers={"WWW-Authenticate": "Bearer"})
 
 
-async def detailed_http_exception_handler(request: Request, exc: Exception) -> JSONResponse:
+async def detailed_http_exception_handler(
+    request: Request, exc: Exception
+) -> JSONResponse:
     # 1. Déterminer le code statut
     status_code = getattr(exc, "status_code", status.HTTP_500_INTERNAL_SERVER_ERROR)
-    
+
     # 2. Déterminer le nom de l'erreur (pour le champ 'error')
     if isinstance(exc, DetailedHTTPException):
         error_name = exc.__class__.__name__
@@ -74,7 +74,7 @@ async def detailed_http_exception_handler(request: Request, exc: Exception) -> J
             "error": error_name,
             "message": message,
             "path": request.url.path,
-            "request_id": getattr(request.state, "request_id", "n/a")
+            "request_id": getattr(request.state, "request_id", "n/a"),
         },
         headers=getattr(exc, "headers", None),
     )

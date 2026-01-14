@@ -3,21 +3,23 @@ from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
 from fastapi import FastAPI
-from fastapi_offline import FastAPIOffline
-from starlette.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
+from fastapi_offline import FastAPIOffline
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from .core.config import settings, app_configs
-from .api.routes.router import router as app_router
 from .api.middlewares.logging import LoggingMiddleware
-from .core.logging import setup_logging
-from .core.exceptions import DetailedHTTPException, detailed_http_exception_handler, NotFound
-from .core.telemetry import setup_telemetry
+from .api.routes.router import router as app_router
+from .core.config import app_configs, settings
 from .core.database import engine
-
+from .core.exceptions import (
+    DetailedHTTPException,
+    detailed_http_exception_handler,
+)
+from .core.logging import setup_logging
+from .core.telemetry import setup_telemetry
 
 setup_logging()
 logger = logging.getLogger(__name__)
@@ -37,8 +39,10 @@ app = FastAPIOffline(**app_configs, lifespan=lifespan)
 # Setup Prometheus /metrics
 setup_telemetry(app)
 
+
 # Instrumentation automatique OTEL
 FastAPIInstrumentor.instrument_app(app)
+
 
 SQLAlchemyInstrumentor().instrument(engine=engine.sync_engine)
 
@@ -63,6 +67,7 @@ app.add_middleware(
 
 
 app.include_router(app_router)
+
 
 @app.get("/")
 async def root() -> dict[str, str]:

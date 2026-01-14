@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 # Convention explicite pour éviter les noms de contraintes aléatoires par défaut
 DB_NAMING_CONVENTION = {
     "ix": "%(column_0_label)s_idx",
@@ -9,6 +8,7 @@ DB_NAMING_CONVENTION = {
     "fk": "%(table_name)s_%(column_0_name)s_fkey",
     "pk": "%(table_name)s_pkey",
 }
+
 
 class Environment(str, Enum):
     LOCAL = "LOCAL"

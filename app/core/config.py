@@ -1,4 +1,5 @@
 from typing import Any
+
 from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
@@ -33,5 +34,5 @@ settings = Config()
 
 app_configs: dict[str, Any] = {
     "title": settings.APP_NAME,
-    "version": settings.APP_VERSION
+    "version": settings.APP_VERSION,
 }
