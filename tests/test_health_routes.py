@@ -32,5 +32,9 @@ async def test_ready():
         transport=ASGITransport(app=app), base_url="http://127.0.0.1:8000"
     ) as ac:
         response = await ac.get("/health/ready")
+
+    # Vérifie le code de statut attendu pour un succès
     assert response.status_code == 200
-    assert response.json() == {"status": "The API is ready to handle traffic"}
+
+    # Vérifie que la réponse contient bien les informations de santé de la DB
+    assert response.json() == {"status": "ready", "database": "connected"}

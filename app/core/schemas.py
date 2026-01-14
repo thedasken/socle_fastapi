@@ -1,7 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, field_serializer
 
 
 def datetime_to_gmt_str(dt: datetime) -> str:
@@ -16,7 +16,12 @@ class CustomModel(BaseModel):
 
     model_config = ConfigDict(
         # Encode automatiquement tous les datetime via la fonction ci-dessus
-        json_encoders={datetime: datetime_to_gmt_str},
         populate_by_name=True,
         from_attributes=True,
     )
+
+    @field_serializer("*")
+    def serialize_dates(self, value: any):
+        if isinstance(value, datetime):
+            return datetime_to_gmt_str(value)
+        return value
