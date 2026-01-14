@@ -8,6 +8,7 @@ from starlette.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
+from starlette.middleware.cors import CORSMiddleware
 
 from .core.config import settings, app_configs
 from .api.routes.router import router as app_router
@@ -49,6 +50,16 @@ app.add_exception_handler(RequestValidationError, detailed_http_exception_handle
 app.add_exception_handler(DetailedHTTPException, detailed_http_exception_handler)
 
 app.add_middleware(LoggingMiddleware)
+
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_origin_regex=settings.CORS_ORIGINS_REGEX,
+    allow_credentials=True,
+    allow_methods=("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"),
+    allow_headers=settings.CORS_HEADERS,
+)
 
 
 app.include_router(app_router)

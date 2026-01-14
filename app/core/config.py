@@ -22,6 +22,11 @@ class Config(CustomBaseSettings):
     DATABASE_POOL_TTL: int = 60 * 20  # 20 minutes
     DATABASE_POOL_PRE_PING: bool = True
 
+    # CORS
+    CORS_ORIGINS: list[str] = ["*"]
+    CORS_ORIGINS_REGEX: str | None = None
+    CORS_HEADERS: list[str] = ["*"]
+
 
 settings = Config()
 
