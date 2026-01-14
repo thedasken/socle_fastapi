@@ -20,6 +20,9 @@ Priorité à la sécurité, aux bonnes pratiques (SQL-first) et à l'observabili
 # Pré-requis : 'just' installé
 # Debian / Ubuntu : sudo apt install just
 # RHEL / AlmaLinux / Fedora : sudo dnf install just
+#
+# Optionnel, uniquement si besoin de données stockées :
+# Une instance de postgresql configurée et démarrée (via le socle_postgres par exemple)
 
 # 1. Préparer l'environnement
 cp .env.example .env
@@ -81,11 +84,15 @@ Le socle inclut une corrélation native entre Logs et Traces :
 ## Commandes Utiles (Justfile)
 
 ```bash
-just run        # Démarrer le serveur uvicorn
-just run-dev    # Serveur avec --reload
-just test       # Lancer la suite Pytest
-just migrate    # Appliquer les migrations Alembic
-
+just run                # Démarrer le serveur uvicorn
+just run-dev            # Serveur avec --reload
+just test               # Lancer la suite Pytest
+just migrate            # Appliquer les migrations Alembic
+just build              # Build image Podman
+just start              # Lancer le pod
+just stop               # Stopper le pod
+just logs               # Logs du conteneur
+just clean              # Supprimer le pod
 ```
 
 ---
