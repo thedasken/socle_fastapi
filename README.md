@@ -1,4 +1,4 @@
-# FastAPI Microservice Template (v2.0.0)
+# FastAPI Microservice Template (v2.1.0)
 
 Template moderne, minimaliste et orienté production pour l'architecture microservices. 
 Priorité à la sécurité, aux bonnes pratiques (SQL-first) et à l'observabilité.
