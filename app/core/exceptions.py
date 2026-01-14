@@ -4,7 +4,7 @@ from fastapi import HTTPException, Request, status
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
-from .config import settings
+from app.core.config import settings
 
 
 class DetailedHTTPException(HTTPException):

@@ -3,9 +3,9 @@ import logging
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-from ...core.exceptions import NotFound
-from ...schemas.user import UserRead
-from ..repositories.user import UserRepository
+from app.api.repositories.user import UserRepository
+from app.core.exceptions import NotFound
+from app.schemas.user import UserRead
 
 router = APIRouter()
 logger = logging.getLogger(__name__)

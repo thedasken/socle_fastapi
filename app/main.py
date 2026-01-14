@@ -10,16 +10,13 @@ from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 from starlette.exceptions import HTTPException
 from starlette.middleware.cors import CORSMiddleware
 
-from .api.middlewares.logging import LoggingMiddleware
-from .api.routes.router import router as app_router
-from .core.config import app_configs, settings
-from .core.database import engine
-from .core.exceptions import (
-    DetailedHTTPException,
-    detailed_http_exception_handler,
-)
-from .core.logging import setup_logging
-from .core.telemetry import setup_telemetry
+from app.api.middlewares.logging import LoggingMiddleware
+from app.api.routes.router import router as app_router
+from app.core.config import app_configs, settings
+from app.core.database import engine
+from app.core.exceptions import DetailedHTTPException, detailed_http_exception_handler
+from app.core.logging import setup_logging
+from app.core.telemetry import setup_telemetry
 
 setup_logging()
 logger = logging.getLogger(__name__)

@@ -4,7 +4,7 @@ from contextvars import ContextVar
 
 from opentelemetry import trace
 
-from .config import settings
+from app.core.config import settings
 
 # Variable de contexte pour stocker le request_id du cycle de vie de la requête
 request_id_context: ContextVar[str] = ContextVar("request_id", default="n/a")

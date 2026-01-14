@@ -4,7 +4,7 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
 from prometheus_client import Counter, Histogram, make_asgi_app
 
-from .config import settings
+from app.core.config import settings
 
 HTTP_REQUEST_COUNT = Counter(
     "http_requests_total", "Total HTTP Requests", ["method", "endpoint", "http_status"]

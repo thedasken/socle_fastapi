@@ -2,8 +2,8 @@ from uuid import UUID
 
 from sqlalchemy import insert, select
 
-from ...core.database import transaction
-from ...models.user import User
+from app.core.database import transaction
+from app.models.user import User
 
 
 class UserRepository:

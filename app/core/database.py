@@ -16,8 +16,8 @@ from tenacity import (
     wait_exponential,
 )
 
-from .config import settings
-from .constants import DB_NAMING_CONVENTION
+from app.core.config import settings
+from app.core.constants import DB_NAMING_CONVENTION
 
 engine = create_async_engine(
     str(settings.DATABASE_ASYNC_URL),

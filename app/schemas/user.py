@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import UUID4, EmailStr, Field
 
-from ..core.schemas import CustomModel
+from app.core.schemas import CustomModel
 
 
 class UserRead(CustomModel):

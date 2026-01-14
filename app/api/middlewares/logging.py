@@ -5,7 +5,7 @@ import uuid
 from fastapi import Request
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from ...core.logging import request_id_context
+from app.core.logging import request_id_context
 
 logger = logging.getLogger(__name__)
 
