@@ -9,3 +9,6 @@ run-dev:
 
 test:
     uv run pytest -v
+
+migrate:
+    uv run alembic upgrade head

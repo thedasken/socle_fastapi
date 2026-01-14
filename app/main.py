@@ -7,6 +7,7 @@ from fastapi_offline import FastAPIOffline
 from starlette.exceptions import HTTPException
 from fastapi.exceptions import RequestValidationError
 from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from opentelemetry.instrumentation.sqlalchemy import SQLAlchemyInstrumentor
 
 from .core.config import settings, app_configs
 from .api.routes.router import router as app_router
@@ -14,6 +15,7 @@ from .api.middlewares.logging import LoggingMiddleware
 from .core.logging import setup_logging
 from .core.exceptions import DetailedHTTPException, detailed_http_exception_handler, NotFound
 from .core.telemetry import setup_telemetry
+from .core.database import engine
 
 
 setup_logging()
@@ -25,6 +27,7 @@ async def lifespan(_application: FastAPI) -> AsyncGenerator:
     # Startup
     yield
     # Shutdown
+    await engine.dispose()
 
 
 app = FastAPIOffline(**app_configs, lifespan=lifespan)
@@ -35,6 +38,8 @@ setup_telemetry(app)
 
 # Instrumentation automatique OTEL
 FastAPIInstrumentor.instrument_app(app)
+
+SQLAlchemyInstrumentor().instrument(engine=engine.sync_engine)
 
 
 app.add_exception_handler(HTTPException, detailed_http_exception_handler)

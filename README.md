@@ -1,68 +1,97 @@
-# Socle FastAPI - Simple et Efficace
+# FastAPI Microservice Template (v2.0.0)
 
-## 📁 Structure minimaliste
+Template moderne, minimaliste et orienté production pour l'architecture microservices. 
+Priorité à la sécurité, aux bonnes pratiques (SQL-first) et à l'observabilité.
 
-```
-socle_fastapi/
-├── Dockerfile
-├── uv.lock
-├── .env.example
-├── .gitignore
-├── pyproject.toml
-├── README.md
-├── app/
-|   ├── core/
-|   |   ├── __init__.py
-|   |   └── config.py
-|   └── main.py
-└── justfile
-```
+## Stack Technique
 
-# FastAPI Service
-
-Template FastAPI Python 3.12 slim pour micro-services avec Podman.
-
-## Installation
-
-```bash
-git clone https://github.com/thedasken/socle_fastapi.git mon_service
-cd mon_service
-rm -rf .git
-```
+* **Runtime**: Python 3.12 (Image slim)
+* **Package Manager**: `uv`
+* **Database**: PostgreSQL 17 (Image alpine) + SQLAlchemy (Async)
+* **Migrations**: Alembic (Async workflow)
+* **Observabilité**: OpenTelemetry (Traces) + Prometheus (Metrics)
+* **Qualité**: Ruff + Pytest (Async ready)
 
 ---
 
-## 🚀 Installation en 30 secondes
+## Démarrage Rapide
 
 ```bash
-# 1. Créer .env
+# Pré-requis : 'just' installé
+# Debian / Ubuntu : sudo apt install just
+# RHEL / AlmaLinux / Fedora : sudo dnf install just
+
+# 1. Préparer l'environnement
 cp .env.example .env
 
-# 2. GO!
-just build
+# 2. Installer les dépendances
+uv sync
+
+# 3. Lancer les migrations
+uv run alembic upgrade head
+# ou
+# just migrate
+
+# 4. Seeder la base (optionnel)
+uv run scripts/seed_db.py
+
+# 5. Démarrer
 just run
 ```
 
 ---
 
-## Utilisation
+## Structure du Projet
 
-```bash
-just run        # Démarrer en local
-just run-dev    # Démarrer en local en mode dev (hot reload)
-just build      # Construire l'image
-just start      # Démarrer le pod
-just stop       # Arrêter le pod
-just clean      # Supprimer le pod
-just logs       # Voir les logs
-just cli        # Se connecter au conteneur
+L'architecture suit les recommandations *FastAPI Best Practices* (Domain-driven) :
+
+```text
+app/
+├── core/               # Config globale, Database engine, Logging, OTEL
+├── api/
+│   ├── routes/         # Endpoints par domaine
+│   ├── repositories/   # Logique SQL pure (Pattern Repository)
+│   ├── middlewares/    # Logging (RID/TraceID correlation)
+├── schemas/            # Modèles Pydantic (CustomModel ISO-GMT)
+├── models/             # Modèles SQLAlchemy
+└── main.py             # Point d'entrée & Instrumentation
 ```
 
-## Configuration
+---
 
-Modifiez `.env` pour changer les credentials et noms de base.
+## Observabilité & Télémétrie
 
-## Démarrage (données d'exemple, à modifier en fonction de votre configuration)
+Le socle inclut une corrélation native entre Logs et Traces :
 
-- **Host:** `127.0.0.1` (le réseau `network_name` mappe les ports des pods sur la machine grâce au bridge, à désactiver en production suivant les besoins)
-- **Port:** `8000`
+* **RID (Request ID)** : Identifiant unique par requête HTTP.
+* **Trace ID** : Identifiant OpenTelemetry propagé dans les logs.
+* **Metrics** : Disponibles sur `/metrics` (Format Prometheus).
+
+---
+
+## Gestion des Données
+
+* **UUID v4** : Utilisé comme clé primaire pour l'indépendance en microservices.
+* **Transactions** : Gestion via `async with transaction():` (Commit/Rollback auto).
+* **Resilience** : Retries automatiques via `tenacity` sur les erreurs de connexion DB.
+* **Naming Convention** : Contraintes DB explicites (`uq_table_column`).
+
+---
+
+## Commandes Utiles (Justfile)
+
+```bash
+just run        # Démarrer le serveur uvicorn
+just run-dev    # Serveur avec --reload
+just test       # Lancer la suite Pytest
+just migrate    # Appliquer les migrations Alembic
+
+```
+
+---
+
+## Sécurité
+
+* Documentation API (`/docs`) désactivée en production.
+* Validation stricte des entrées/sorties via Pydantic.
+* Images Docker non-root (voir Dockerfile).
